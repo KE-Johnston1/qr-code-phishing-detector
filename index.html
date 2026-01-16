@@ -12,6 +12,10 @@
         <h1>QR Code Phishing Detector 🛡️📱</h1>
         <p class="subtitle">Upload a QR code to analyse the embedded link for phishing risks.</p>
 
+        <div class="controls-top">
+            <button id="dark-toggle">Toggle Dark Mode</button>
+        </div>
+
         <div class="upload-box">
             <input type="file" id="qr-input" accept="image/*">
         </div>
@@ -20,10 +24,21 @@
             <h2>Scan Result</h2>
             <p id="decoded-text"></p>
 
+            <div class="action-buttons">
+                <button id="copy-url-btn" disabled>Copy URL</button>
+                <button id="download-report-btn" disabled>Download Report</button>
+                <button id="clear-btn">Clear Scan</button>
+            </div>
+
             <h3>Risk Analysis</h3>
             <div id="risk-output"></div>
         </div>
     </div>
+
+    <footer>
+        <p>Created by K — QR Phishing Detector</p>
+        <p>For educational use only. This tool does not guarantee link safety.</p>
+    </footer>
 
     <!-- QR decoder library -->
     <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
