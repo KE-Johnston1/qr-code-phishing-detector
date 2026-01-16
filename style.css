@@ -7,7 +7,7 @@ body {
     color: #e4e7f0;
 }
 
-/* Dark mode toggle */
+/* Light mode */
 body.light-mode {
     background: #f0f2f5;
     color: #111827;
@@ -49,6 +49,7 @@ h1 {
     margin-bottom: 10px;
 }
 
+/* Buttons */
 button {
     background: #111827;
     color: #e5e7eb;
@@ -66,6 +67,11 @@ button:hover {
 button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+button:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
 }
 
 body.light-mode button {
@@ -96,6 +102,39 @@ body.light-mode button:hover {
 body.light-mode #qr-input {
     background: #ffffff;
     color: #111827;
+}
+
+/* Drop zone */
+#drop-zone {
+    margin-top: 15px;
+    padding: 16px;
+    border: 2px dashed #4b5563;
+    border-radius: 8px;
+    color: #9ca3af;
+    background: #020617;
+}
+
+#drop-zone.drag-over {
+    border-color: #3b82f6;
+    background: #020617;
+    color: #e5e7eb;
+}
+
+body.light-mode #drop-zone {
+    background: #f9fafb;
+    border-color: #9ca3af;
+    color: #4b5563;
+}
+
+body.light-mode #drop-zone.drag-over {
+    border-color: #3b82f6;
+    background: #e5f2ff;
+    color: #111827;
+}
+
+#drop-zone:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
 }
 
 /* Result box */
@@ -136,7 +175,7 @@ body.light-mode #result {
     font-size: 14px;
 }
 
-/* Risk colours */
+/* Risk colours (dark mode) */
 .risk-low {
     background: #064e3b;
     color: #bbf7d0;
@@ -155,6 +194,7 @@ body.light-mode #result {
     border: 2px solid #ef4444;
 }
 
+/* Risk colours (light mode) */
 body.light-mode .risk-low {
     background: #d4f8d4;
     color: #0a7a0a;
@@ -203,4 +243,17 @@ footer {
 
 body.light-mode footer {
     color: #4b5563;
+}
+
+/* Visually hidden (for screen readers) */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
