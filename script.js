@@ -138,7 +138,6 @@ function analyseUrlRisk(rawUrl) {
         reasons.push("Encoded characters present in URL.");
     }
 
-    // Final risk level
     let level = "LOW";
     if (score >= 60) level = "HIGH";
     else if (score >= 30) level = "MEDIUM";
@@ -184,4 +183,11 @@ function formatRiskAnalysis(analysis) {
     html += "Treat unexpected links with caution, especially if received via email, SMS, or QR codes in public places.";
 
     return html;
+}
+
+function escapeHtml(str) {
+    return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
 }
