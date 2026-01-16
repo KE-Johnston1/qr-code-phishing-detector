@@ -7,15 +7,19 @@ const copyBtn = document.getElementById("copy-url-btn");
 const downloadBtn = document.getElementById("download-report-btn");
 const clearBtn = document.getElementById("clear-btn");
 const darkToggle = document.getElementById("dark-toggle");
+const dropZone = document.getElementById("drop-zone");
 
 let lastAnalysis = null;
 
-// Dark mode toggle
+// ---------------- DARK MODE ----------------
+
 darkToggle.addEventListener("click", () => {
-    document.body.classList.toggle("light-mode");
+    const isLight = document.body.classList.toggle("light-mode");
+    darkToggle.setAttribute("aria-pressed", isLight ? "true" : "false");
 });
 
-// Clear scan
+// ---------------- CLEAR SCAN ----------------
+
 clearBtn.addEventListener("click", () => {
     fileInput.value = "";
     decodedTextEl.textContent = "";
@@ -26,17 +30,20 @@ clearBtn.addEventListener("click", () => {
     downloadBtn.disabled = true;
 });
 
-// Copy URL
+// ---------------- COPY URL ----------------
+
 copyBtn.addEventListener("click", () => {
     if (!lastAnalysis) return;
     navigator.clipboard.writeText(lastAnalysis.url).catch(() => {});
 });
 
-// Download report
+// ---------------- DOWNLOAD REPORT ----------------
+
 downloadBtn.addEventListener("click", () => {
     if (!lastAnalysis) return;
 
     const { url, score, level, reasons } = lastAnalysis;
+
     let text = `QR Code Phishing Detector Report\n\n`;
     text += `Analysed URL: ${url}\n`;
     text += `Risk Level: ${level}\n`;
@@ -44,9 +51,7 @@ downloadBtn.addEventListener("click", () => {
 
     if (reasons.length) {
         text += `Indicators:\n`;
-        for (const r of reasons) {
-            text += `- ${r}\n`;
-        }
+        for (const r of reasons) text += `- ${r}\n`;
     } else {
         text += `No obvious phishing indicators detected.\n`;
     }
@@ -64,14 +69,60 @@ downloadBtn.addEventListener("click", () => {
     URL.revokeObjectURL(urlObj);
 });
 
-// File input handler
+// ---------------- FILE INPUT HANDLER ----------------
+
 fileInput.addEventListener("change", () => {
     const file = fileInput.files[0];
     if (!file) return;
+    handleImageFile(file);
+});
 
+// ---------------- DRAG & DROP HANDLERS ----------------
+
+["dragenter", "dragover"].forEach(eventName => {
+    dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add("drag-over");
+    });
+});
+
+["dragleave", "drop"].forEach(eventName => {
+    dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove("drag-over");
+    });
+});
+
+dropZone.addEventListener("drop", (e) => {
+    const files = e.dataTransfer.files;
+    if (!files || !files.length) return;
+    const file = files[0];
+    if (!file.type.startsWith("image/")) {
+        decodedTextEl.textContent = "Please drop an image file containing a QR code.";
+        resultBox.classList.remove("hidden");
+        riskOutputEl.textContent = "";
+        return;
+    }
+    handleImageFile(file);
+});
+
+// Keyboard activation for drop zone (opens file picker)
+dropZone.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        fileInput.click();
+    }
+});
+
+// ---------------- CORE IMAGE HANDLER ----------------
+
+function handleImageFile(file) {
     decodedTextEl.textContent = "Decoding QR code...";
     riskOutputEl.textContent = "";
     resultBox.classList.remove("hidden");
+
     copyBtn.disabled = true;
     downloadBtn.disabled = true;
     lastAnalysis = null;
@@ -98,6 +149,7 @@ fileInput.addEventListener("change", () => {
                     const analysis = analyseUrlRisk(decoded);
                     lastAnalysis = analysis;
                     riskOutputEl.innerHTML = formatRiskAnalysis(analysis);
+
                     copyBtn.disabled = false;
                     downloadBtn.disabled = false;
                 } else {
@@ -111,9 +163,9 @@ fileInput.addEventListener("change", () => {
         img.src = reader.result;
     };
     reader.readAsDataURL(file);
-});
+}
 
-// --------- URL detection ---------
+// ---------------- URL DETECTION ----------------
 
 function isUrl(text) {
     try {
@@ -124,7 +176,7 @@ function isUrl(text) {
     }
 }
 
-// --------- Risk analysis engine (maximum depth) ---------
+// ---------------- RISK ENGINE ----------------
 
 function analyseUrlRisk(rawUrl) {
     const url = normaliseUrl(rawUrl);
@@ -153,7 +205,7 @@ function analyseUrlRisk(rawUrl) {
         "bit.ly", "tinyurl.com", "t.co", "goo.gl", "ow.ly", "is.gd",
         "buff.ly", "cutt.ly", "rebrand.ly", "bit.do"
     ];
-    if (shorteners.some(s => hostname === s)) {
+    if (shorteners.includes(hostname)) {
         score += 25;
         reasons.push("URL shortener detected (destination may be hidden).");
     }
@@ -165,13 +217,12 @@ function analyseUrlRisk(rawUrl) {
     }
 
     // 5. Excessive subdomains
-    const parts = hostname.split(".");
-    if (parts.length > 4) {
+    if (hostname.split(".").length > 4) {
         score += 15;
         reasons.push("Excessive subdomains used (possible obfuscation).");
     }
 
-    // 6. @ symbol in URL
+    // 6. @ symbol
     if (full.includes("@")) {
         score += 20;
         reasons.push("@ symbol present in URL (can hide real destination).");
@@ -183,7 +234,7 @@ function analyseUrlRisk(rawUrl) {
         reasons.push("Punycode domain detected (possible homograph attack).");
     }
 
-    // 8. Suspicious keywords (auth, finance, urgency, crypto, gov)
+    // 8. Keyword groups
     const keywordGroups = {
         auth: ["login", "verify", "update", "secure", "password", "reset", "signin"],
         finance: ["bank", "wallet", "payment", "invoice", "paypal", "card"],
@@ -194,18 +245,15 @@ function analyseUrlRisk(rawUrl) {
 
     let keywordHits = [];
     for (const group in keywordGroups) {
-        const hits = keywordGroups[group].filter(k => full.includes(k));
-        if (hits.length) {
-            keywordHits = keywordHits.concat(hits);
-        }
+        keywordHits.push(...keywordGroups[group].filter(k => full.includes(k)));
     }
-    if (keywordHits.length > 0) {
+    if (keywordHits.length) {
         score += 20;
         reasons.push("Contains sensitive or urgent keywords: " + keywordHits.join(", ") + ".");
     }
 
-    // 9. Long query / tracking
-    if (url.search && url.search.length > 80) {
+    // 9. Long query
+    if (url.search.length > 80) {
         score += 10;
         reasons.push("Very long query string (possible tracking or obfuscation).");
     }
@@ -220,6 +268,7 @@ function analyseUrlRisk(rawUrl) {
     const path = url.pathname.toLowerCase();
     const badExt = [".exe", ".apk", ".zip", ".rar", ".scr", ".js", ".bat", ".cmd"];
     const docExt = [".pdf", ".doc", ".docx", ".xls", ".xlsx"];
+
     if (badExt.some(ext => path.endsWith(ext))) {
         score += 30;
         reasons.push("Suspicious executable or archive file extension in URL path.");
@@ -229,19 +278,19 @@ function analyseUrlRisk(rawUrl) {
     }
 
     // 12. Suspicious ports
-    const port = url.port;
     const oddPorts = ["8080", "3000", "4443", "1337"];
-    if (port && oddPorts.includes(port)) {
+    if (url.port && oddPorts.includes(url.port)) {
         score += 10;
-        reasons.push(`Non-standard port used (:${port}).`);
+        reasons.push(`Non-standard port used (:${url.port}).`);
     }
 
-    // 13. Unicode homoglyph heuristic (very rough)
+    // 13. Unicode homoglyph heuristic
     if (/[^\x00-\x7F]/.test(hostname)) {
         score += 15;
         reasons.push("Non-ASCII characters in domain (possible homoglyph attack).");
     }
 
+    // Final risk level
     let level = "LOW";
     if (score >= 70) level = "HIGH";
     else if (score >= 35) level = "MEDIUM";
@@ -257,13 +306,14 @@ function normaliseUrl(raw) {
     }
 }
 
-// --------- Formatting ---------
+// ---------------- FORMATTING ----------------
 
 function formatRiskAnalysis(analysis) {
     const { url, score, level, reasons } = analysis;
 
     let badgeClass = "risk-low";
     let icon = "🟢";
+
     if (level === "MEDIUM") {
         badgeClass = "risk-medium";
         icon = "🟡";
@@ -273,7 +323,7 @@ function formatRiskAnalysis(analysis) {
         icon = "🔴";
     }
 
-    // Clickable only for LOW risk
+    // Only LOW risk URLs are clickable
     let urlDisplay = escapeHtml(url);
     if (level === "LOW") {
         urlDisplay = `<a href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer" class="safe-link">${escapeHtml(url)}</a>`;
@@ -315,3 +365,41 @@ function escapeAttr(str) {
         .replace(/"/g, "&quot;")
         .replace(/</g, "&lt;");
 }
+
+// ---------------- TEST CASES ----------------
+
+function runTestCases() {
+    const tests = [
+        {
+            label: "Low risk example.com",
+            url: "https://example.com/login?session=123"
+        },
+        {
+            label: "Medium risk suspicious TLD + verify",
+            url: "http://example.xyz/verify-account"
+        },
+        {
+            label: "High risk IP + encoded + login/update",
+            url: "http://192.168.1.50/login/update?session=999&token=%AF%22%9C"
+        },
+        {
+            label: "High risk shortener + payment",
+            url: "http://bit.ly/secure-update-payment?invoice=44882&auth=%F0%9F%94%92"
+        }
+    ];
+
+    console.log("=== QR Phishing Detector Test Cases ===");
+    for (const t of tests) {
+        const analysis = analyseUrlRisk(t.url);
+        console.log(`\n[${t.label}]`);
+        console.log("URL:   ", analysis.url);
+        console.log("Level: ", analysis.level);
+        console.log("Score: ", analysis.score);
+        console.log("Reasons:");
+        analysis.reasons.forEach(r => console.log(" -", r));
+    }
+    console.log("\n=== End of tests ===");
+}
+
+// Uncomment this line if you want tests to run automatically in the console on load:
+// runTestCases();
