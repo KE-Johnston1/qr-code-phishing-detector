@@ -1,1 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Phishing Detector</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>QR Code Phishing Detector 🛡️📱</h1>
+        <p class="subtitle">Upload a QR code to analyse the embedded link for phishing risks.</p>
+
+        <div class="upload-box">
+            <input type="file" id="qr-input" accept="image/*">
+        </div>
+
+        <div id="result" class="hidden">
+            <h2>Scan Result</h2>
+            <p id="decoded-text"></p>
+
+            <h3>Risk Analysis</h3>
+            <p id="risk-output"></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
 
