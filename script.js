@@ -159,8 +159,17 @@ function normaliseUrl(raw) {
 function formatRiskAnalysis(analysis) {
     const { url, score, level, reasons } = analysis;
 
-    let html = `<strong>Analysed URL:</strong> ${escapeHtml(url)}<br>`;
-    html += `<strong>Overall Risk:</strong> ${level} (score: ${score})<br>`;
+    let badgeClass = "risk-low";
+    if (level === "MEDIUM") badgeClass = "risk-medium";
+    if (level === "HIGH") badgeClass = "risk-high";
+
+    let html = `
+        <div class="risk-badge ${badgeClass}">
+            ${level} RISK
+        </div><br>
+        <strong>Analysed URL:</strong> ${escapeHtml(url)}<br>
+        <strong>Score:</strong> ${score}<br>
+    `;
 
     if (!reasons.length) {
         html += "No obvious phishing indicators detected. This does not guarantee the link is safe.";
@@ -175,11 +184,4 @@ function formatRiskAnalysis(analysis) {
     html += "Treat unexpected links with caution, especially if received via email, SMS, or QR codes in public places.";
 
     return html;
-}
-
-function escapeHtml(str) {
-    return str
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
 }
