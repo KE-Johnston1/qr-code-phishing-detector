@@ -8,26 +8,33 @@
 </head>
 <body>
 
-    <div class="container">
+    <div class="container" role="main">
         <h1>QR Code Phishing Detector 🛡️📱</h1>
-        <p class="subtitle">Upload a QR code to analyse the embedded link for phishing risks.</p>
+        <p class="subtitle">
+            Upload or drag-and-drop a QR code image to analyse the embedded link for phishing risks.
+        </p>
 
         <div class="controls-top">
-            <button id="dark-toggle">Toggle Dark Mode</button>
+            <button id="dark-toggle" type="button" aria-pressed="false">Toggle Dark Mode</button>
         </div>
 
         <div class="upload-box">
-            <input type="file" id="qr-input" accept="image/*">
+            <label for="qr-input" class="visually-hidden">Upload QR code image</label>
+            <input type="file" id="qr-input" accept="image/*" aria-label="Upload QR code image">
+
+            <div id="drop-zone" tabindex="0" role="button" aria-label="Drag and drop QR code image here">
+                <p>Drag &amp; drop a QR code image here, or use the file picker above.</p>
+            </div>
         </div>
 
-        <div id="result" class="hidden">
+        <div id="result" class="hidden" aria-live="polite">
             <h2>Scan Result</h2>
             <p id="decoded-text"></p>
 
             <div class="action-buttons">
-                <button id="copy-url-btn" disabled>Copy URL</button>
-                <button id="download-report-btn" disabled>Download Report</button>
-                <button id="clear-btn">Clear Scan</button>
+                <button id="copy-url-btn" type="button" disabled>Copy URL</button>
+                <button id="download-report-btn" type="button" disabled>Download Report</button>
+                <button id="clear-btn" type="button">Clear Scan</button>
             </div>
 
             <h3>Risk Analysis</h3>
