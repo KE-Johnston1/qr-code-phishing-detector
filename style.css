@@ -4,36 +4,92 @@ body {
     margin: 0;
     padding: 0;
 }
-
+/* Container */
 .container {
     max-width: 600px;
     margin: 40px auto;
-    background: white;
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    font-family: Arial, sans-serif;
 }
 
+/* Headings */
 h1 {
-    margin-top: 0;
+    text-align: center;
+    margin-bottom: 10px;
 }
 
 .subtitle {
+    text-align: center;
     color: #555;
+    margin-bottom: 20px;
 }
 
+/* Upload box */
 .upload-box {
-    margin: 20px 0;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#qr-input {
+    padding: 10px;
+    border: 2px solid #0078d4;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* Result box */
+#result {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f7f7f7;
+    border-radius: 10px;
+    border-left: 6px solid #0078d4;
 }
 
 .hidden {
     display: none;
 }
 
-#result {
-    margin-top: 20px;
-    padding: 15px;
-    background: #eef2f7;
-    border-radius: 8px;
+/* Risk badge */
+.risk-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-size: 14px;
 }
+
+/* Risk colours */
+.risk-low {
+    background: #d4f8d4;
+    color: #0a7a0a;
+    border: 2px solid #0a7a0a;
+}
+
+.risk-medium {
+    background: #fff4cc;
+    color: #b88600;
+    border: 2px solid #b88600;
+}
+
+.risk-high {
+    background: #ffd6d6;
+    color: #b30000;
+    border: 2px solid #b30000;
+}
+
+/* Bullet list */
+#risk-output ul {
+    margin-top: 10px;
+    padding-left: 20px;
+}
+
+#risk-output li {
+    margin-bottom: 6px;
+}
+
 
