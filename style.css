@@ -1,19 +1,33 @@
-/* Page base */
+/* Base */
 body {
     margin: 0;
     padding: 0;
-    background: #f0f2f5;
+    background: #050814;
     font-family: Arial, sans-serif;
+    color: #e4e7f0;
+}
+
+/* Dark mode toggle */
+body.light-mode {
+    background: #f0f2f5;
+    color: #111827;
 }
 
 /* Container */
 .container {
-    max-width: 650px;
+    max-width: 700px;
     margin: 40px auto;
     padding: 24px 20px;
-    background: #ffffff;
+    background: #0b1020;
     border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.6);
+    border: 1px solid #1f2937;
+}
+
+body.light-mode .container {
+    background: #ffffff;
     box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border-color: #d1d5db;
 }
 
 /* Headings */
@@ -24,8 +38,44 @@ h1 {
 
 .subtitle {
     text-align: center;
-    color: #555;
+    color: #9ca3af;
     margin-bottom: 20px;
+}
+
+/* Top controls */
+.controls-top {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+
+button {
+    background: #111827;
+    color: #e5e7eb;
+    border: 1px solid #374151;
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+button:hover {
+    background: #1f2937;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+body.light-mode button {
+    background: #e5e7eb;
+    color: #111827;
+    border-color: #9ca3af;
+}
+
+body.light-mode button:hover {
+    background: #d1d5db;
 }
 
 /* Upload box */
@@ -36,27 +86,49 @@ h1 {
 
 #qr-input {
     padding: 10px;
-    border: 2px solid #0078d4;
+    border: 2px solid #3b82f6;
     border-radius: 8px;
     cursor: pointer;
+    background: #020617;
+    color: #e5e7eb;
+}
+
+body.light-mode #qr-input {
+    background: #ffffff;
+    color: #111827;
 }
 
 /* Result box */
 #result {
     margin-top: 20px;
     padding: 20px;
-    background: #f7f7f7;
+    background: #020617;
     border-radius: 10px;
-    border-left: 6px solid #0078d4;
+    border-left: 6px solid #3b82f6;
 }
 
+body.light-mode #result {
+    background: #f7f7f7;
+}
+
+/* Hidden */
 .hidden {
     display: none;
 }
 
+/* Action buttons */
+.action-buttons {
+    margin: 10px 0 15px 0;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
 /* Risk badge */
 .risk-badge {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     padding: 6px 12px;
     border-radius: 6px;
     font-weight: bold;
@@ -66,21 +138,39 @@ h1 {
 
 /* Risk colours */
 .risk-low {
-    background: #d4f8d4;
-    color: #0a7a0a;
-    border: 2px solid #0a7a0a;
+    background: #064e3b;
+    color: #bbf7d0;
+    border: 2px solid #22c55e;
 }
 
 .risk-medium {
-    background: #fff4cc;
-    color: #b88600;
-    border: 2px solid #b88600;
+    background: #78350f;
+    color: #fef3c7;
+    border: 2px solid #f59e0b;
 }
 
 .risk-high {
+    background: #7f1d1d;
+    color: #fee2e2;
+    border: 2px solid #ef4444;
+}
+
+body.light-mode .risk-low {
+    background: #d4f8d4;
+    color: #0a7a0a;
+    border-color: #0a7a0a;
+}
+
+body.light-mode .risk-medium {
+    background: #fff4cc;
+    color: #b88600;
+    border-color: #b88600;
+}
+
+body.light-mode .risk-high {
     background: #ffd6d6;
     color: #b30000;
-    border: 2px solid #b30000;
+    border-color: #b30000;
 }
 
 /* Bullet list */
@@ -91,4 +181,26 @@ h1 {
 
 #risk-output li {
     margin-bottom: 6px;
+}
+
+/* Links */
+.safe-link {
+    color: #3b82f6;
+    text-decoration: underline;
+}
+
+.safe-link:hover {
+    color: #60a5fa;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+body.light-mode footer {
+    color: #4b5563;
 }
